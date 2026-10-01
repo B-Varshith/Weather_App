@@ -14,6 +14,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from app.config import settings
+from app.utils import extract_text
 from app.prompts.response_prompt import (
     RESPONSE_SYSTEM_PROMPT,
     build_response_user_prompt,
@@ -48,6 +49,9 @@ class ResponseService:
         selected_sop: dict[str, Any],
         activity: str | None = None,
         location_name: str | None = None,
+        decision_reason: str | None = None,
+        latitude: float | None = None,
+        longitude: float | None = None,
     ) -> str:
         """Compose a policy-grounded advisory response."""
         user_prompt = build_response_user_prompt(
@@ -56,13 +60,16 @@ class ResponseService:
             selected_sop=selected_sop,
             activity=activity,
             location_name=location_name,
+            decision_reason=decision_reason,
+            latitude=latitude,
+            longitude=longitude,
         )
         messages = [
             SystemMessage(content=RESPONSE_SYSTEM_PROMPT),
             HumanMessage(content=user_prompt),
         ]
         response = await self.llm.ainvoke(messages)
-        return response.content
+        return extract_text(response.content)
 
     async def compose_no_sop(self, user_query: str, weather: dict[str, Any], location_name: str | None = None) -> str:
         """Compose a response when no SOP applies."""
@@ -75,7 +82,7 @@ class ResponseService:
             )),
         ]
         response = await self.llm.ainvoke(messages)
-        return response.content
+        return extract_text(response.content)
 
     async def compose_weather_failure(self, user_query: str, location_name: str | None = None) -> str:
         """Compose a response when weather data cannot be fetched."""
@@ -87,7 +94,7 @@ class ResponseService:
             )),
         ]
         response = await self.llm.ainvoke(messages)
-        return response.content
+        return extract_text(response.content)
 
     async def compose_location_failure(self, user_query: str, location_name: str | None = None) -> str:
         """Compose a response when the location cannot be resolved."""
@@ -99,4 +106,4 @@ class ResponseService:
             )),
         ]
         response = await self.llm.ainvoke(messages)
-        return response.content
+        return extract_text(response.content)

@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import SopCitationComponent from './SopCitation';
 import { SOPCitation } from '../services/api';
 
@@ -85,8 +86,18 @@ export default function Message({ message }: MessageProps) {
         </div>
 
         {/* Message content */}
-        <div className="text-sm leading-relaxed whitespace-pre-wrap">
-          {message.content}
+        <div className="text-sm leading-relaxed">
+          <ReactMarkdown
+            components={{
+              p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+              ul: ({ node, ...props }) => <ul className="list-disc list-outside ml-4 mb-2" {...props} />,
+              ol: ({ node, ...props }) => <ol className="list-decimal list-outside ml-4 mb-2" {...props} />,
+              li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+              strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
+            }}
+          >
+            {message.content}
+          </ReactMarkdown>
         </div>
 
         {/* Weather data badge */}
@@ -103,7 +114,6 @@ export default function Message({ message }: MessageProps) {
             📍 {message.location.name} ({message.location.latitude?.toFixed(4)}, {message.location.longitude?.toFixed(4)})
           </div>
         )}
-
         {/* Timestamp */}
         <div className={`text-[10px] mt-2 ${isUser ? 'text-primary-300' : 'text-dark-400'}`}>
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

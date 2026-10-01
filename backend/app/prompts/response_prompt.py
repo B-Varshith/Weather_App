@@ -23,7 +23,6 @@ You MUST NOT:
 You MAY:
 - Explain the selected SOP in natural, friendly language
 - Present the weather facts exactly as supplied
-- Answer conversationally and helpfully
 - Mention the SOP ID and name for traceability
 
 Every advisory response MUST cite the SOP ID (e.g., "Policy: SOP-002 — High Wind for Cycling").
@@ -37,24 +36,43 @@ def build_response_user_prompt(
     selected_sop: dict[str, Any],
     activity: str | None = None,
     location_name: str | None = None,
+    decision_reason: str | None = None,
+    latitude: float | None = None,
+    longitude: float | None = None,
 ) -> str:
     """Build the user prompt for advisory composition."""
+    act = (activity.title() if activity else "Activity").replace("_", " ")
     return f"""The user asked: "{user_query}"
 
-Activity detected: {activity or 'unknown'}
-Location: {location_name or 'unknown'}
+Compose the response EXACTLY in the following plain text format. DO NOT use markdown bolding (**) or italics. DO NOT add conversational filler like "Hello". Fill in the bracketed placeholders using the data below:
 
-Weather data (from live API — use these exact values):
-{json.dumps(weather, indent=2)}
+{act} in {location_name or 'Unknown'}
 
-Selected policy:
-{json.dumps(selected_sop, indent=2)}
+Current Weather
 
-Compose a clear, conversational response that:
-1. States the relevant weather conditions using the exact numbers above
-2. Explains why the selected SOP applies
-3. Provides the guidance from the SOP
-4. Cites the policy: "Policy: {selected_sop.get('id', 'N/A')} — {selected_sop.get('name', 'N/A')}"
+Temperature: [Temperature]°C
+Wind: [Wind Speed] km/h
+Wind Gusts: [Wind Gusts] km/h
+Rain Probability: [Rain Probability]%
+UV Index: [UV Index]
+
+Policy Applied
+
+{selected_sop.get('id', 'N/A')} — {selected_sop.get('name', 'N/A')}
+Severity: {selected_sop.get('severity', 'N/A').upper()}
+
+Why it matched:
+{decision_reason or 'No specific reason provided.'}
+
+Guidance:
+[Combine the guidance list items into a single plain text block, or separate them by newlines. No bullet asterisks.]
+
+{location_name or 'Unknown'}
+{latitude if latitude is not None else 'N/A'}, {longitude if longitude is not None else 'N/A'}
+
+DATA TO USE:
+Weather: {json.dumps(weather, indent=2)}
+SOP Guidance: {json.dumps(selected_sop.get('guidance', []), indent=2)}
 """
 
 
@@ -64,15 +82,13 @@ Location: {location}
 Weather data retrieved:
 {weather}
 
-No Standard Operating Procedure (SOP) matched this request.
+No Standard Operating Procedure (SOP) matched this request. This means the weather conditions do not trigger any safety warnings for this activity.
 
 Compose a response that:
 1. Acknowledges the user's question
-2. States that you don't currently have a safety policy that covers this specific situation
-3. Explains that you cannot provide a safety recommendation without an applicable policy
-4. Suggests the user check general weather conditions if relevant
-5. Does NOT invent any safety advice or recommendation
-6. States: "Policy: No applicable SOP"
+2. States clearly that since no safety policies were triggered, it is safe to proceed with the activity.
+3. Provides a brief overview of the current weather conditions so they know what to expect.
+4. States: "Policy: No applicable SOP — Safe to proceed"
 """
 
 

@@ -11,7 +11,7 @@ class Settings:
 
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "gemini")
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
-    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
     WEATHER_BASE_URL: str = os.getenv(
         "WEATHER_BASE_URL", "https://api.open-meteo.com/v1/forecast"

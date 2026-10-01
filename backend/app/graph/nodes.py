@@ -15,6 +15,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from app.config import settings
+from app.utils import extract_text
 from app.graph.state import AdvisoryState
 from app.services.location_service import LocationService
 from app.services.geocoding_service import LocationResolutionError
@@ -102,9 +103,10 @@ Respond with JSON only."""
         HumanMessage(content=user_prompt),
     ])
 
+    content = ""
     try:
         # Clean the response — strip markdown code fences if present
-        content = response.content.strip()
+        content = extract_text(response.content).strip()
         if content.startswith("```"):
             content = content.split("\n", 1)[1] if "\n" in content else content
             if content.endswith("```"):
@@ -114,7 +116,7 @@ Respond with JSON only."""
                 content = content[4:].strip()
         intent = json.loads(content)
     except (json.JSONDecodeError, Exception) as e:
-        logger.error("Failed to parse intent: %s — raw: %s", e, response.content)
+        logger.error("Failed to parse intent: %s — raw: %s", e, content)
         intent = {
             "activity_category": None,
             "location": None,
@@ -348,6 +350,9 @@ async def compose_response(state: AdvisoryState) -> AdvisoryState:
             selected_sop=selected_sop,
             activity=activity,
             location_name=location_name,
+            decision_reason=state.get("decision_reason"),
+            latitude=state.get("latitude"),
+            longitude=state.get("longitude"),
         )
     else:
         # No SOP matched
