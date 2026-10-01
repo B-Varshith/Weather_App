@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-10-01T14:03:03.654234",
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "results": [
+    {
+      "id": "EV-001",
+      "name": "Direct SOP application",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-002",
+      "name": "Paraphrased cycling intent",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-003",
+      "name": "Child outdoor activity",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-004",
+      "name": "Travel policy",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-005",
+      "name": "Picnic fuzzy policy",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-006",
+      "name": "Severe live weather",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-007",
+      "name": "No SOP fallback",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-008",
+      "name": "Weather API failure",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-009",
+      "name": "Location failure",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-010",
+      "name": "Prompt injection",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-011",
+      "name": "Session memory",
+      "status": "PASS"
+    },
+    {
+      "id": "EV-012",
+      "name": "Multiple SOP conflict",
+      "status": "PASS"
+    }
+  ]
+}

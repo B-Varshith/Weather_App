@@ -1,0 +1,335 @@
+# =============================================================
+# Standard Operating Procedures (SOPs) for Weather Advisory Bot
+# =============================================================
+# Add new SOPs here — no code changes required.
+# The SOP engine dynamically loads this file at startup.
+# =============================================================
+
+# ----- SOP-001: Extreme UV for Outdoor Exercise -----
+- id: SOP-001
+  name: Extreme UV Outdoor Exercise
+  category: outdoor_exercise
+  severity: high
+  type: standard
+
+  applies_when:
+    all:
+      - field: uv_index
+        operator: gte
+        value: 8
+      - field: activity_category
+        operator: in
+        value:
+          - running
+          - cycling
+          - outdoor_exercise
+          - jogging
+          - hiking
+          - walking
+
+  guidance:
+    - Avoid unprotected outdoor exercise between 11:00 and 16:00.
+    - Use sunscreen with SPF 30 or higher.
+    - Prefer early morning or evening hours for exercise.
+    - Wear UV-protective clothing and sunglasses.
+
+  rationale: "UV index of 8 or above poses significant risk of sunburn and heat-related illness during prolonged outdoor exercise."
+  priority: 60
+
+# ----- SOP-002: High Wind for Cycling -----
+- id: SOP-002
+  name: High Wind for Cycling
+  category: outdoor_exercise
+  severity: high
+  type: standard
+
+  applies_when:
+    all:
+      - field: wind_speed_kmh
+        operator: gte
+        value: 40
+      - field: activity_category
+        operator: in
+        value:
+          - cycling
+          - biking
+          - two_wheeler
+          - bike_riding
+
+  guidance:
+    - Wind speeds above 40 km/h pose a safety risk for cyclists.
+    - Avoid cycling under these conditions.
+    - Consider alternative indoor exercise or postpone until wind subsides.
+
+  rationale: "Strong crosswinds above 40 km/h can destabilise cyclists, especially on open roads."
+  priority: 80
+
+# ----- SOP-003: Heavy Rain for Outdoor Activity -----
+- id: SOP-003
+  name: Heavy Rain Outdoor Activity
+  category: outdoor_activity
+  severity: high
+  type: standard
+
+  applies_when:
+    all:
+      - field: precipitation_probability
+        operator: gte
+        value: 70
+      - field: precipitation_mm
+        operator: gte
+        value: 5
+
+  guidance:
+    - Avoid or postpone outdoor activities due to heavy rain.
+    - Recheck weather conditions before leaving.
+    - If you must go out, carry rain gear and be cautious of slippery surfaces.
+
+  rationale: "Heavy rain with high probability significantly affects safety and comfort for any outdoor activity."
+  priority: 70
+
+# ----- SOP-004: High Rain Probability for Travel -----
+- id: SOP-004
+  name: High Rain Probability Travel
+  category: travel
+  severity: moderate
+  type: standard
+
+  applies_when:
+    all:
+      - field: precipitation_probability
+        operator: gte
+        value: 70
+      - field: activity_category
+        operator: in
+        value:
+          - travel
+          - driving
+          - commuting
+          - road_trip
+
+  guidance:
+    - Expect possible delays due to rain.
+    - Check local traffic and weather alerts before departure.
+    - Drive with caution and maintain safe following distance.
+
+  rationale: "High precipitation probability can cause road hazards, reduced visibility, and traffic delays."
+  priority: 50
+
+# ----- SOP-005: Strong Wind for Travel -----
+- id: SOP-005
+  name: Strong Wind Travel
+  category: travel
+  severity: moderate
+  type: standard
+
+  applies_when:
+    all:
+      - field: wind_speed_kmh
+        operator: gte
+        value: 40
+      - field: activity_category
+        operator: in
+        value:
+          - travel
+          - driving
+          - commuting
+          - road_trip
+
+  guidance:
+    - Allow additional travel time.
+    - Check local weather warnings before departure.
+    - Exercise additional caution, especially on highways and bridges.
+
+  rationale: "Strong winds above 40 km/h affect vehicle stability, particularly for high-profile vehicles."
+  priority: 55
+
+# ----- SOP-006: Children + Extreme Heat -----
+- id: SOP-006
+  name: Children Extreme Heat
+  category: children
+  severity: high
+  type: standard
+
+  applies_when:
+    all:
+      - field: temperature_c
+        operator: gte
+        value: 38
+      - field: user_group
+        operator: eq
+        value: child
+      - field: outdoor_activity
+        operator: eq
+        value: true
+
+  guidance:
+    - Avoid prolonged outdoor exposure for children.
+    - Prefer cooler hours (early morning or evening).
+    - Keep the child well hydrated.
+    - Watch for signs of heat exhaustion.
+
+  rationale: "Children are more vulnerable to extreme heat due to higher surface-area-to-body-mass ratio."
+  priority: 75
+
+# ----- SOP-007: Children + High UV -----
+- id: SOP-007
+  name: Children High UV
+  category: children
+  severity: moderate
+  type: standard
+
+  applies_when:
+    all:
+      - field: uv_index
+        operator: gte
+        value: 7
+      - field: user_group
+        operator: eq
+        value: child
+
+  guidance:
+    - Prefer shaded areas for children's activities.
+    - Use sun protection (sunscreen, hat, long sleeves).
+    - Avoid prolonged exposure during peak UV hours (11:00–16:00).
+
+  rationale: "Children's skin is more sensitive to UV radiation; a UV index of 7+ requires protective measures."
+  priority: 55
+
+# ----- SOP-008: Elderly + Extreme Heat -----
+- id: SOP-008
+  name: Elderly Extreme Heat
+  category: vulnerable_groups
+  severity: high
+  type: standard
+
+  applies_when:
+    all:
+      - field: temperature_c
+        operator: gte
+        value: 38
+      - field: user_group
+        operator: eq
+        value: elderly
+
+  guidance:
+    - Avoid prolonged outdoor activity.
+    - Prefer cooler hours for any necessary outdoor tasks.
+    - Stay hydrated and take frequent breaks in shade or air conditioning.
+
+  rationale: "Elderly individuals face higher risk of heat stroke and dehydration during extreme temperatures."
+  priority: 75
+
+# ----- SOP-009: Pet Walking + Extreme Heat -----
+- id: SOP-009
+  name: Pet Walking Extreme Heat
+  category: pets
+  severity: high
+  type: standard
+
+  applies_when:
+    all:
+      - field: temperature_c
+        operator: gte
+        value: 35
+      - field: activity_category
+        operator: in
+        value:
+          - dog_walking
+          - pet_walking
+          - walking_dog
+
+  guidance:
+    - Avoid walking pets during peak heat hours.
+    - Prefer early morning or evening walks.
+    - Keep walks short and carry water for your pet.
+    - Check pavement temperature — hot surfaces can burn paw pads.
+
+  rationale: "Temperatures above 35°C pose serious risk to pets, including heat stroke and paw pad burns."
+  priority: 70
+
+# ----- SOP-010: Thunderstorm / Severe Weather -----
+- id: SOP-010
+  name: Thunderstorm Severe Weather
+  category: general_outdoor
+  severity: critical
+  type: standard
+
+  applies_when:
+    any:
+      - field: is_thunderstorm
+        operator: eq
+        value: true
+      - field: weather_code
+        operator: in
+        value: [95, 96, 99]
+
+  guidance:
+    - Avoid all outdoor activities immediately.
+    - Seek shelter in a substantial building.
+    - Stay away from tall objects, water, and open fields.
+    - Wait for conditions to clear before going outside.
+
+  rationale: "Thunderstorms present immediate danger from lightning, strong gusts, and flash flooding."
+  priority: 100
+
+# ----- SOP-011: Fuzzy Picnic Suitability -----
+- id: SOP-011
+  name: Picnic Suitability
+  category: general_outdoor
+  severity: moderate
+  type: composite
+
+  applies_when:
+    any:
+      - all:
+          - field: precipitation_probability
+            operator: gte
+            value: 60
+          - field: precipitation_mm
+            operator: gt
+            value: 0
+      - all:
+          - field: wind_speed_kmh
+            operator: gte
+            value: 35
+      - all:
+          - field: uv_index
+            operator: gte
+            value: 8
+
+  guidance:
+    - Current conditions may make a picnic uncomfortable or impractical.
+    - Consider an indoor alternative or reschedule.
+    - If proceeding, prepare for wind, rain, or strong sun as applicable.
+
+  rationale: "A picnic is unsuitable when there is meaningful rain probability, uncomfortable wind, or extreme UV."
+  priority: 30
+
+# ----- SOP-012: Severe Weather Override -----
+- id: SOP-012
+  name: Severe Weather Override
+  category: global
+  severity: critical
+  type: standard
+
+  applies_when:
+    any:
+      - field: severe_weather_signal
+        operator: eq
+        value: true
+      - field: precipitation_mm
+        operator: gte
+        value: 20
+      - field: wind_gusts_kmh
+        operator: gte
+        value: 80
+
+  guidance:
+    - Severe weather conditions detected — avoid all outdoor activities.
+    - This overrides any activity-specific assessment.
+    - Stay indoors and monitor official weather alerts.
+    - Do not travel unless absolutely necessary.
+
+  rationale: "Severe weather events (extreme rain, wind, or storms) override all activity-level policies."
+  priority: 100
