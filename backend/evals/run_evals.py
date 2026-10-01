@@ -87,11 +87,11 @@ def run_evals():
         matches = evaluate_all_sops(sops, weather, intent)
         matched_ids = [m.sop.id for m in matches]
         winner = resolve_conflicts(matches)
-        if "SOP-002" in matched_ids and winner and winner.sop.id == "SOP-002":
+        if "SOP-048" in matched_ids and winner and winner.sop.id == "SOP-048":
             results.append(EvalResult("EV-001", "Direct SOP application", "PASS"))
         else:
             results.append(EvalResult("EV-001", "Direct SOP application", "FAIL",
-                                       expected="SOP-002 matched", actual=str(matched_ids)))
+                                       expected="SOP-048 matched", actual=str(matched_ids)))
     except Exception as e:
         results.append(EvalResult("EV-001", "Direct SOP application", "FAIL", reason=str(e)))
 
@@ -102,11 +102,11 @@ def run_evals():
         intent = {"activity_category": "cycling"}  # LLM would extract this from "riding my bike"
         matches = evaluate_all_sops(sops, weather, intent)
         matched_ids = [m.sop.id for m in matches]
-        if "SOP-002" in matched_ids:
+        if "SOP-048" in matched_ids:
             results.append(EvalResult("EV-002", "Paraphrased cycling intent", "PASS"))
         else:
             results.append(EvalResult("EV-002", "Paraphrased cycling intent", "FAIL",
-                                       expected="SOP-002", actual=str(matched_ids)))
+                                       expected="SOP-048", actual=str(matched_ids)))
     except Exception as e:
         results.append(EvalResult("EV-002", "Paraphrased cycling intent", "FAIL", reason=str(e)))
 
@@ -116,11 +116,11 @@ def run_evals():
         intent = {"activity_category": "outdoor_play", "user_group": "child"}
         matches = evaluate_all_sops(sops, weather, intent)
         matched_ids = [m.sop.id for m in matches]
-        if "SOP-006" in matched_ids or "SOP-007" in matched_ids:
+        if "SOP-023" in matched_ids or "SOP-024" in matched_ids:
             results.append(EvalResult("EV-003", "Child outdoor activity", "PASS"))
         else:
             results.append(EvalResult("EV-003", "Child outdoor activity", "FAIL",
-                                       expected="SOP-006 or SOP-007", actual=str(matched_ids)))
+                                       expected="SOP-023 or SOP-024", actual=str(matched_ids)))
     except Exception as e:
         results.append(EvalResult("EV-003", "Child outdoor activity", "FAIL", reason=str(e)))
 
@@ -130,11 +130,11 @@ def run_evals():
         intent = {"activity_category": "travel"}
         matches = evaluate_all_sops(sops, weather, intent)
         matched_ids = [m.sop.id for m in matches]
-        if "SOP-004" in matched_ids or "SOP-005" in matched_ids:
+        if "SOP-016" in matched_ids or "SOP-018" in matched_ids:
             results.append(EvalResult("EV-004", "Travel policy", "PASS"))
         else:
             results.append(EvalResult("EV-004", "Travel policy", "FAIL",
-                                       expected="SOP-004 or SOP-005", actual=str(matched_ids)))
+                                       expected="SOP-016 or SOP-018", actual=str(matched_ids)))
     except Exception as e:
         results.append(EvalResult("EV-004", "Travel policy", "FAIL", reason=str(e)))
 
@@ -144,11 +144,11 @@ def run_evals():
         intent = {"activity_category": "picnic"}
         matches = evaluate_all_sops(sops, weather, intent)
         matched_ids = [m.sop.id for m in matches]
-        if "SOP-011" in matched_ids:
+        if "SOP-025" in matched_ids:
             results.append(EvalResult("EV-005", "Picnic fuzzy policy", "PASS"))
         else:
             results.append(EvalResult("EV-005", "Picnic fuzzy policy", "FAIL",
-                                       expected="SOP-011", actual=str(matched_ids)))
+                                       expected="SOP-025", actual=str(matched_ids)))
     except Exception as e:
         results.append(EvalResult("EV-005", "Picnic fuzzy policy", "FAIL", reason=str(e)))
 
@@ -208,11 +208,11 @@ def run_evals():
         intent = {"activity_category": "cycling"}  # User tried to override but engine ignores
         matches = evaluate_all_sops(sops, weather, intent)
         matched_ids = [m.sop.id for m in matches]
-        if "SOP-002" in matched_ids:
+        if "SOP-048" in matched_ids:
             results.append(EvalResult("EV-010", "Prompt injection", "PASS"))
         else:
             results.append(EvalResult("EV-010", "Prompt injection", "FAIL",
-                                       expected="SOP-002 still matches with real weather",
+                                       expected="SOP-048 still matches with real weather",
                                        actual=str(matched_ids)))
     except Exception as e:
         results.append(EvalResult("EV-010", "Prompt injection", "FAIL", reason=str(e)))
@@ -241,13 +241,13 @@ def run_evals():
         intent = {"activity_category": "cycling"}
         matches = evaluate_all_sops(sops, weather, intent)
         matched_ids = [m.sop.id for m in matches]
-        assert "SOP-001" in matched_ids, f"SOP-001 not in {matched_ids}"
-        assert "SOP-002" in matched_ids, f"SOP-002 not in {matched_ids}"
+        assert "SOP-007" in matched_ids, f"SOP-007 not in {matched_ids}"
+        assert "SOP-048" in matched_ids, f"SOP-048 not in {matched_ids}"
 
         winner = resolve_conflicts(matches)
         assert winner is not None
-        # SOP-002 (priority=80) beats SOP-001 (priority=60), both high severity
-        assert winner.sop.id == "SOP-002"
+        # SOP-007 (High UV, severity=high) beats SOP-048 (Wind Advisory, severity=moderate)
+        assert winner.sop.id == "SOP-007"
         results.append(EvalResult("EV-012", "Multiple SOP conflict", "PASS"))
     except Exception as e:
         results.append(EvalResult("EV-012", "Multiple SOP conflict", "FAIL", reason=str(e)))

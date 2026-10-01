@@ -7,7 +7,7 @@
   location: "Bhopal"
   expected:
     activity: cycling
-    sop_considered: SOP-002
+    sop_considered: SOP-048
   pass_conditions:
     - "SOP applies when live wind crosses threshold"
     - "Response cites SOP"
@@ -51,7 +51,7 @@
   location: "Pune"
   expected:
     activity: picnic
-    sop_considered: SOP-011
+    sop_considered: SOP-025
   pass_conditions:
     - "activity = picnic detected"
     - "SOP-011 evaluated using multi-factor rule"
@@ -130,8 +130,8 @@
   intent:
     activity: cycling
   expected:
-    matched: [SOP-001, SOP-002]
-    selected: SOP-002
+    matched: [SOP-007, SOP-048]
+    selected: SOP-007
   pass_conditions:
     - "Multiple SOPs detected"
     - "Conflict resolution deterministic"
