@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -13,6 +15,8 @@ body {
   background-color: #141619;
   color: #e9ecef;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom scrollbar */
@@ -20,21 +24,21 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #212529;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #495057;
+  background: #343a40;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #868e96;
+  background: #495057;
 }
 
 /* Typing animation */
 @keyframes typing {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
+  0% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-2px); }
+  100% { opacity: 0.3; transform: translateY(0); }
 }
 
 .typing-dot {
@@ -45,4 +49,9 @@ body {
 }
 .typing-dot:nth-child(3) {
   animation-delay: 0.4s;
+}
+
+/* Subtle glow on focused input */
+#message-input:focus {
+  box-shadow: 0 0 0 1px rgba(92, 124, 250, 0.3), 0 0 20px -5px rgba(92, 124, 250, 0.15);
 }

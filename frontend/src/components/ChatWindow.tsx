@@ -8,6 +8,15 @@ interface ChatWindowProps {
   onNewSession: () => void;
 }
 
+const EXAMPLE_QUERIES = [
+  { icon: '🚴', text: 'Is it safe to cycle in Bhopal today?' },
+  { icon: '🧒', text: 'Can I take my child to the park in Delhi?' },
+  { icon: '🧺', text: 'Is today good for a picnic in Mumbai?' },
+  { icon: '🐕', text: 'Can I walk my dog this afternoon in Bangalore?' },
+  { icon: '🥾', text: 'Is hiking safe in Shimla today?' },
+  { icon: '🏊', text: 'Can I go swimming in Goa today?' },
+];
+
 export default function ChatWindow({ sessionId, onNewSession }: ChatWindowProps) {
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +31,6 @@ export default function ChatWindow({ sessionId, onNewSession }: ChatWindowProps)
   }, [messages, scrollToBottom]);
 
   const handleSend = async (text: string) => {
-    // Add user message
     const userMsg: MessageData = {
       id: `user-${Date.now()}`,
       role: 'user',
@@ -63,23 +71,28 @@ export default function ChatWindow({ sessionId, onNewSession }: ChatWindowProps)
   return (
     <div id="chat-window" className="flex flex-col h-full">
       {/* Header */}
-      <header className="flex-shrink-0 bg-dark-800/95 backdrop-blur-sm border-b border-dark-600/50 px-4 py-3">
+      <header className="flex-shrink-0 bg-dark-800/95 backdrop-blur-md border-b border-dark-600/50 px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/20">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/20">
               <span className="text-lg">⛅</span>
             </div>
             <div>
               <h1 className="text-base font-bold text-dark-50 tracking-tight">Weather Advisory Bot</h1>
-              <p className="text-[10px] text-dark-400 font-mono">Policy-controlled safety advisor</p>
+              <p className="text-[10px] text-dark-400 font-mono tracking-wide">
+                SOP-driven · Policy-controlled · No guesswork
+              </p>
             </div>
           </div>
           <button
             id="new-session-btn"
-            onClick={onNewSession}
-            className="text-xs text-dark-300 hover:text-primary-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-dark-700/50"
+            onClick={() => {
+              setMessages([]);
+              onNewSession();
+            }}
+            className="text-xs text-dark-300 hover:text-primary-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-dark-700/50 border border-dark-600/30 hover:border-dark-500/50"
           >
-            New Session
+            + New Session
           </button>
         </div>
       </header>
@@ -88,29 +101,47 @@ export default function ChatWindow({ sessionId, onNewSession }: ChatWindowProps)
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-3xl mx-auto space-y-4">
           {messages.length === 0 && (
-            <div className="text-center py-16 animate-fade-in">
-              <div className="text-5xl mb-4">🌦️</div>
+            <div className="text-center py-12 animate-fade-in">
+              <div className="text-6xl mb-5">🌦️</div>
               <h2 className="text-xl font-bold text-dark-100 mb-2">Weather Advisory Bot</h2>
-              <p className="text-sm text-dark-400 max-w-md mx-auto leading-relaxed">
-                Ask me about the safety or suitability of outdoor activities based on live weather conditions. 
-                Every recommendation is backed by a specific policy (SOP).
+              <p className="text-sm text-dark-400 max-w-md mx-auto leading-relaxed mb-2">
+                Ask about the safety of outdoor activities based on <strong className="text-dark-300">live weather data</strong> and <strong className="text-dark-300">Standard Operating Procedures</strong>.
               </p>
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg mx-auto">
-                {[
-                  'Is it safe to cycle in Bhopal today?',
-                  'Can I take my child to the park?',
-                  'Is today good for a picnic in Delhi?',
-                  'Can I walk my dog this afternoon?',
-                ].map((q) => (
+              <p className="text-xs text-dark-500 max-w-sm mx-auto mb-8">
+                Every recommendation is backed by a specific policy. If no policy covers your situation, the bot will tell you honestly.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-w-2xl mx-auto">
+                {EXAMPLE_QUERIES.map((q) => (
                   <button
-                    key={q}
-                    onClick={() => handleSend(q)}
+                    key={q.text}
+                    onClick={() => handleSend(q.text)}
                     disabled={isLoading}
-                    className="text-left text-xs text-dark-300 bg-dark-700/50 hover:bg-dark-700 border border-dark-600/30 hover:border-dark-500/50 rounded-lg px-3 py-2.5 transition-all duration-200 hover:text-dark-100"
+                    className="group text-left text-xs text-dark-300 bg-dark-800/60 hover:bg-dark-700/80 border border-dark-600/30 hover:border-primary-500/30 rounded-xl px-4 py-3 transition-all duration-200 hover:text-dark-100 hover:shadow-lg hover:shadow-primary-500/5"
                   >
-                    "{q}"
+                    <span className="text-base mr-2">{q.icon}</span>
+                    <span className="group-hover:text-dark-50 transition-colors">{q.text}</span>
                   </button>
                 ))}
+              </div>
+
+              <div className="mt-10 flex items-center justify-center gap-4 text-[10px] text-dark-500">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  Safe conditions
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  Use caution
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                  High risk
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                  Critical
+                </span>
               </div>
             </div>
           )}
@@ -121,12 +152,15 @@ export default function ChatWindow({ sessionId, onNewSession }: ChatWindowProps)
 
           {isLoading && (
             <div className="flex justify-start animate-slide-up">
-              <div className="bg-dark-700/80 border border-dark-600/40 rounded-2xl rounded-bl-md px-4 py-3 shadow-lg">
-                <div className="text-[10px] font-semibold uppercase tracking-wider mb-1 text-dark-300">Advisory Bot</div>
-                <div className="flex gap-1.5 py-1">
-                  <span className="typing-dot w-2 h-2 bg-primary-400 rounded-full inline-block"></span>
-                  <span className="typing-dot w-2 h-2 bg-primary-400 rounded-full inline-block"></span>
-                  <span className="typing-dot w-2 h-2 bg-primary-400 rounded-full inline-block"></span>
+              <div className="bg-dark-700/80 border border-dark-600/40 rounded-2xl rounded-bl-md px-5 py-4 shadow-lg">
+                <div className="text-[10px] font-bold uppercase tracking-widest mb-2 text-dark-400">⛅ Advisory Bot</div>
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <span className="typing-dot w-2 h-2 bg-primary-400 rounded-full inline-block"></span>
+                    <span className="typing-dot w-2 h-2 bg-primary-400 rounded-full inline-block"></span>
+                    <span className="typing-dot w-2 h-2 bg-primary-400 rounded-full inline-block"></span>
+                  </div>
+                  <span className="text-[10px] text-dark-500 ml-1">Checking weather & policies…</span>
                 </div>
               </div>
             </div>
