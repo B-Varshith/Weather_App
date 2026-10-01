@@ -151,16 +151,21 @@ export default function ChatWindow({ sessionId, onNewSession }: ChatWindowProps)
           ))}
 
           {isLoading && (
-            <div className="flex justify-start animate-slide-up">
-              <div className="bg-dark-700/80 border border-dark-600/40 rounded-2xl rounded-bl-md px-5 py-4 shadow-lg">
-                <div className="text-[10px] font-bold uppercase tracking-widest mb-2 text-dark-400">⛅ Advisory Bot</div>
-                <div className="flex items-center gap-2">
+            <div className="flex justify-start msg-enter">
+              <div className="flex-shrink-0 mr-2.5 mt-1">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/20 text-sm animate-pulse-soft">
+                  ⛅
+                </div>
+              </div>
+              <div className="bg-dark-700/70 border border-dark-600/30 rounded-2xl rounded-bl-sm px-5 py-4 shadow-xl shadow-black/20 backdrop-blur-sm">
+                <div className="text-[10px] font-extrabold uppercase tracking-[0.15em] mb-2.5 text-dark-400">Advisory Bot</div>
+                <div className="flex items-center gap-3">
                   <div className="flex gap-1.5">
                     <span className="typing-dot w-2 h-2 bg-primary-400 rounded-full inline-block"></span>
                     <span className="typing-dot w-2 h-2 bg-primary-400 rounded-full inline-block"></span>
                     <span className="typing-dot w-2 h-2 bg-primary-400 rounded-full inline-block"></span>
                   </div>
-                  <span className="text-[10px] text-dark-500 ml-1">Checking weather & policies…</span>
+                  <span className="text-[10px] text-dark-500 font-medium">Checking weather & evaluating SOPs…</span>
                 </div>
               </div>
             </div>
