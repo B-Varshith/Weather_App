@@ -81,7 +81,7 @@ function useStaggerReveal(count: number, baseDelay = 150) {
   const [visible, setVisible] = useState<boolean[]>(new Array(count).fill(false));
 
   useEffect(() => {
-    const timers: NodeJS.Timeout[] = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     for (let i = 0; i < count; i++) {
       timers.push(
         setTimeout(() => {
