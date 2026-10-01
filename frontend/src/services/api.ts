@@ -18,7 +18,7 @@ export interface ChatResponseData {
   error: string | null;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://weather-app-u5vv.vercel.app/api';
 
 export async function sendMessage(
   sessionId: string,
