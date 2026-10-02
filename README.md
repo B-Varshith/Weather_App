@@ -44,63 +44,57 @@ This is a **genuine LangGraph graph with conditional branching** — not a linea
 
 ### LangGraph Flow Diagram
 
-```
-                          ┌─────────────────────┐
-                          │       START          │
-                          └──────────┬───────────┘
-                                     │
-                                     ▼
-                     ┌───────────────────────────────┐
-                     │     1. classify_intent         │
-                     │  (LLM: extract activity,       │
-                     │   location, time, user_group)   │
-                     └──────────────┬────────────────┘
-                                     │
-                                     ▼
-                     ┌───────────────────────────────┐
-                     │     2. resolve_location        │
-                     │  (Open-Meteo Geocoding API)     │
-                     └──────────┬────────┬───────────┘
-                                │        │
-                        success │        │ failure
-                                │        │
-                                ▼        ▼
-              ┌─────────────────┐    ┌──────────────────┐
-              │ 3. fetch_weather │    │ location_failure  │──► END
-              │  (Open-Meteo     │    │ "Can't resolve    │
-              │   Forecast API)  │    │  this location"   │
-              └──────┬────┬─────┘    └──────────────────┘
-                     │    │
-             success │    │ failure
-                     │    │
-                     ▼    ▼
-       ┌─────────────┐   ┌──────────────────┐
-       │4. evaluate   │   │ weather_failure   │──► END
-       │   _sops      │   │ "Can't fetch      │
-       │ (Deterministic│   │  weather data"    │
-       │  SOP Engine)  │   └──────────────────┘
-       └──┬──────┬────┘
-          │      │
-   match  │      │ no match
-          │      │
-          ▼      ▼
- ┌────────────┐  ┌──────────────────┐
- │5. resolve  │  │ no_sop_fallback  │──► END
- │  _conflicts│  │ "No guidance for  │
- │ (Severity  │  │  this scenario"   │
- │  ranking)  │  └──────────────────┘
- └──────┬─────┘
-        │
-        ▼
- ┌──────────────────┐
- │ 6. compose       │
- │    _response     │
- │ (LLM: compose    │
- │  from facts)     │
- └──────┬───────────┘
-        │
-        ▼
-      END
+```mermaid
+flowchart TD
+    START([START]) --> classify_intent
+
+    subgraph LLM_Layer["🤖 LLM Layer"]
+        classify_intent["1. classify_intent\n(Extract activity, location,\ntime, user_group)"]
+    end
+
+    classify_intent --> resolve_location
+
+    subgraph Data_Layer["🌐 External API Layer"]
+        resolve_location["2. resolve_location\n(Open-Meteo Geocoding)"]
+        fetch_weather["3. fetch_weather\n(Open-Meteo Forecast)"]
+    end
+
+    resolve_location -- "✅ Success" --> fetch_weather
+    resolve_location -- "❌ Failure" --> location_failure
+
+    fetch_weather -- "✅ Success" --> evaluate_sops
+    fetch_weather -- "❌ Failure" --> weather_failure
+
+    subgraph Policy_Layer["⚙️ Deterministic Policy Engine"]
+        evaluate_sops["4. evaluate_sops\n(Check all SOPs against\nweather facts + intent)"]
+        resolve_conflicts["5. resolve_conflicts\n(Severity → Priority ranking)"]
+    end
+
+    evaluate_sops -- "🟢 Match Found" --> resolve_conflicts
+    evaluate_sops -- "⚪ No Match" --> no_sop_fallback
+
+    subgraph Compose_Layer["🤖 LLM Composer"]
+        compose_response["6. compose_response\n(Natural language from\npre-decided facts)"]
+    end
+
+    resolve_conflicts --> compose_response
+
+    subgraph Failure_Paths["🔴 Honest Failure Paths"]
+        location_failure["location_failure\n(Cannot resolve location)"]
+        weather_failure["weather_failure\n(Cannot fetch weather)"]
+        no_sop_fallback["no_sop_fallback\n(No policy covers this —\nsafe to proceed)"]
+    end
+
+    compose_response --> END_1([END])
+    location_failure --> END_2([END])
+    weather_failure --> END_3([END])
+    no_sop_fallback --> END_4([END])
+
+    style LLM_Layer fill:#1e3a5f,stroke:#4a90d9,color:#fff
+    style Data_Layer fill:#1a3c34,stroke:#2ecc71,color:#fff
+    style Policy_Layer fill:#3c1a3c,stroke:#9b59b6,color:#fff
+    style Compose_Layer fill:#1e3a5f,stroke:#4a90d9,color:#fff
+    style Failure_Paths fill:#3c1a1a,stroke:#e74c3c,color:#fff
 ```
 
 ### What Each Node Does
